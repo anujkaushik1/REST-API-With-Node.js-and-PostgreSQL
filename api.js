@@ -20,3 +20,15 @@ app.get("/users", function (req, res) {
 
   client.end;
 });
+
+app.get('/users/:id', function(req, res){
+    client.query(`Select * from users where id=${req.params.id}`, function(err, results){
+        if(!err){
+            res.status(200).json({
+                success : true,
+                data : results.rows
+            });
+        }
+    });
+    client.end;
+});
