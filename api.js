@@ -2,6 +2,8 @@ const client = require("./connection");
 const express = require("express");
 const app = express();
 
+app.use(express.json());
+
 app.listen(3000, function () {
   console.log("Server is running at port", 3000);
 });
@@ -21,14 +23,39 @@ app.get("/users", function (req, res) {
   client.end;
 });
 
-app.get('/users/:id', function(req, res){
-    client.query(`Select * from users where id=${req.params.id}`, function(err, results){
-        if(!err){
-            res.status(200).json({
-                success : true,
-                data : results.rows
-            });
-        }
-    });
-    client.end;
+app.get("/users/:id", function (req, res) {
+  console.log(req.params);
+  client.query(
+    `Select * from users where id=${req.params.id}`,
+    function (err, results) {
+      if (!err) {
+        res.status(200).json({
+          success: true,
+          data: results.rows,
+        });
+      }
+    }
+  );
+  client.end;
+});
+
+app.post("/users", function (req, res) {
+  const user = req.body;
+  console.log(user);
+  let insertQuery = `insert into users(id, firstname, lastname, location) 
+                       values(${user.id}, '${user.firstname}', '${user.lastname}', '${user.location}')`;
+  client.query(insertQuery, function (err, results) {
+    if (!err) {
+      res.status(200).json({
+        success: true,
+        data: results,
+        length: results.rowCount,
+      });
+    } else {
+      res.json({
+        data: err.message,
+      });
+    }
+  });
+  client.end;
 });
