@@ -59,3 +59,28 @@ app.post("/users", function (req, res) {
   });
   client.end;
 });
+
+app.put("/users/:id", function (req, res) {
+  const user = req.body;
+  console.log(user);
+  const updateQuery = `UPDATE users
+                      SET firstname='${user.firstname}', lastname='${user.lastname}', location='${user.location}'
+                      WHERE id=${req.params.id}`;
+
+  client.query(updateQuery, function (err, results) {
+    if (!err) {
+      res.status(200).json({
+        success: true,
+        data: user,
+      });
+    }
+    else{
+      res.json({
+        data : err.message
+      })
+    }
+  });
+
+  client.end;
+
+});
