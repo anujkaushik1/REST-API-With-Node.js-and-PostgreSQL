@@ -84,3 +84,23 @@ app.put("/users/:id", function (req, res) {
   client.end;
 
 });
+
+app.delete('/users/:id', function(req, res){
+  const deleteQuery = `DELETE FROM public.users
+                    	 WHERE id = ${req.params.id}`
+  client.query(deleteQuery, function(err, results){
+      if(!err){
+        res.status(200).json({
+          success: true,
+          data : results.rows
+        })
+      }
+      else{
+        res.json({
+          data : err.message
+        })
+      }
+  });
+
+
+})
